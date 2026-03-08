@@ -8,6 +8,7 @@ export type BridgeAction =
     | "dom.getText"
     | "dom.querySelector"
     | "interaction.click"
+    | "interaction.hover"
     | "interaction.type"
     | "interaction.scroll"
     | "interaction.pressKey"

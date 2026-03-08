@@ -38,6 +38,23 @@ export function registerInteractionTools(server: McpServer): void {
     );
 
     server.tool(
+        "hover_element",
+        "Hover over an element on the page (human-like mouse movement)",
+        {
+            tabId: z.number().optional().describe("Tab ID (default: active tab)"),
+            selector: z.string().describe("CSS selector of element to hover"),
+            duration: z.number().optional().describe("Hover duration in ms (default: 300-800 random)"),
+        },
+        async ({ tabId, selector, duration }) => {
+            const res = await send("interaction.hover", { tabId, selector, duration });
+            return {
+                content: [{ type: "text", text: res.success ? "Hovered" : res.error! }],
+                isError: !res.success,
+            };
+        },
+    );
+
+    server.tool(
         "scroll",
         "Scroll the page or an element",
         {
