@@ -3,9 +3,13 @@
   "name": "Browser Control MCP Bridge",
   "version": "0.1.0",
   "description": "WebSocket bridge for Browser Control MCP server",
-  "permissions": ["tabs", "activeTab", "<all_urls>"],
+  "permissions": ["tabs", "activeTab", "storage", "<all_urls>"],
+  "browser_action": {
+    "default_title": "Browser Control",
+    "default_popup": "popup.html"
+  },
   "background": {
-    "scripts": ["background.js"],
+    "scripts": ["crypto.js", "background.js"],
     "persistent": true
   },
   "content_scripts": [
@@ -15,6 +19,10 @@
       "run_at": "document_idle"
     }
   ],
+  "options_ui": {
+    "page": "credentials.html",
+    "open_in_tab": true
+  },
   "browser_specific_settings": {
     "gecko": {
       "id": "browser-control@mcp.local",

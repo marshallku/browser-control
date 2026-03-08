@@ -13,6 +13,9 @@ const TIMEOUT_LONG = 30_000;
 const LONG_TIMEOUT_ACTIONS: Set<BridgeAction> = new Set([
   "capture.screenshot",
   "execution.executeJs",
+  "interaction.fillSecure",
+  "interaction.type",
+  "credentials.fill",
 ]);
 
 const pendingRequests = new Map<

@@ -12,6 +12,9 @@ export type BridgeAction =
   | "interaction.type"
   | "interaction.scroll"
   | "interaction.pressKey"
+  | "interaction.fillSecure"
+  | "credentials.list"
+  | "credentials.fill"
   | "capture.screenshot"
   | "capture.computedStyles"
   | "execution.executeJs";

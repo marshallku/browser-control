@@ -5,6 +5,16 @@ const RECONNECT_INTERVAL = 5000;
 
 let ws = null;
 
+// Handle popup status queries
+api.runtime.onMessage.addListener((message, sender, sendResponse) => {
+  if (message.type === "getStatus") {
+    sendResponse({
+      connected: ws !== null && ws.readyState === WebSocket.OPEN,
+    });
+    return false;
+  }
+});
+
 function connect() {
   if (ws && ws.readyState === WebSocket.OPEN) return;
 
@@ -140,6 +150,43 @@ async function handleRequest(request) {
       return result.data;
     }
 
+    case "credentials.list": {
+      const creds = await decryptCredentialStore(params.masterPassword);
+      // Only return aliases — never expose actual credentials
+      return creds.map((c) => c.alias);
+    }
+
+    case "credentials.fill": {
+      const creds = await decryptCredentialStore(params.masterPassword);
+      const cred = creds.find((c) => c.alias === params.alias);
+      if (!cred) throw new Error(`Credential '${params.alias}' not found`);
+
+      const tabId = await getTargetTabId(params);
+
+      // Fill username — value goes directly to content script, never returned to MCP
+      await sendToContentScript(tabId, {
+        action: "interaction.fillSecure",
+        params: { selector: params.usernameSelector, value: cred.username },
+      });
+
+      // Fill password
+      await sendToContentScript(tabId, {
+        action: "interaction.fillSecure",
+        params: { selector: params.passwordSelector, value: cred.password },
+      });
+
+      // Optionally click submit
+      if (params.submit && params.submitSelector) {
+        await sendToContentScript(tabId, {
+          action: "interaction.click",
+          params: { selector: params.submitSelector },
+        });
+      }
+
+      // Return only confirmation, no credential values
+      return { filled: true, alias: params.alias };
+    }
+
     default: {
       if (action.startsWith("dom.") || action.startsWith("interaction.")) {
         const tabId = await getTargetTabId(params);
@@ -147,6 +194,28 @@ async function handleRequest(request) {
       }
       throw new Error(`Unknown action: ${action}`);
     }
+  }
+}
+
+const CRED_STORAGE_KEY = "credentials_encrypted";
+
+async function decryptCredentialStore(masterPassword) {
+  if (!masterPassword) throw new Error("Master password is required");
+
+  const result = await new Promise((resolve) => {
+    api.storage.local.get(CRED_STORAGE_KEY, (r) => resolve(r));
+  });
+
+  const encrypted = result[CRED_STORAGE_KEY];
+  if (!encrypted)
+    throw new Error(
+      "No credentials stored. Add them via the extension options page.",
+    );
+
+  try {
+    return await __cryptoUtils.decryptData(masterPassword, encrypted);
+  } catch {
+    throw new Error("Wrong master password or corrupted credential store");
   }
 }
 

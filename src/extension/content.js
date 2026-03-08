@@ -453,6 +453,16 @@ async function handleMessage(message) {
       return null;
     }
 
+    case "interaction.fillSecure": {
+      // Fill a form field with a value using human-like typing.
+      // Used by credential system — the value comes from the encrypted
+      // local store and is never exposed in MCP responses.
+      const el = document.querySelector(params.selector);
+      if (!el) throw new Error(`Element not found: ${params.selector}`);
+      await humanType(el, params.value, true);
+      return null;
+    }
+
     case "interaction.pressKey": {
       const target = params.selector
         ? document.querySelector(params.selector)

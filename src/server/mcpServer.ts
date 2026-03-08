@@ -4,6 +4,7 @@ import { registerDomTools } from "./tools/dom.js";
 import { registerInteractionTools } from "./tools/interaction.js";
 import { registerCaptureTools } from "./tools/capture.js";
 import { registerExecutionTools } from "./tools/execution.js";
+import { registerCredentialTools } from "./tools/credentials.js";
 
 export function createMcpServer(): McpServer {
   const server = new McpServer({
@@ -16,6 +17,7 @@ export function createMcpServer(): McpServer {
   registerInteractionTools(server);
   registerCaptureTools(server);
   registerExecutionTools(server);
+  registerCredentialTools(server);
 
   return server;
 }
