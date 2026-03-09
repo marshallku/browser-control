@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        font-family:
+          -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        background: #0f1117;
+        color: #e1e4e8;
+        width: 260px;
+        padding: 16px;
+      }
+      h1 {
+        font-size: 15px;
+        margin-bottom: 4px;
+      }
+      .status {
+        font-size: 12px;
+        margin-bottom: 14px;
+      }
+      .dot {
+        display: inline-block;
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        margin-right: 4px;
+        vertical-align: middle;
+      }
+      .dot.on {
+        background: #3fb950;
+      }
+      .dot.off {
+        background: #da3633;
+      }
+      button {
+        display: block;
+        width: 100%;
+        padding: 8px 12px;
+        margin-bottom: 6px;
+        border: none;
+        border-radius: 6px;
+        font-size: 13px;
+        cursor: pointer;
+        font-weight: 500;
+        background: #238636;
+        color: #fff;
+        text-align: left;
+      }
+      button:hover {
+        background: #2ea043;
+      }
+      button.secondary {
+        background: #30363d;
+      }
+      button.secondary:hover {
+        background: #3d444d;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Browser Control</h1>
+    <p class="status" id="status"><span class="dot off"></span>Checking...</p>
+    <button id="btn-creds">Credentials Manager</button>
+    <button id="btn-options" class="secondary">Extension Options</button>
+    <script src="popup.js"></script>
+  </body>
+</html>

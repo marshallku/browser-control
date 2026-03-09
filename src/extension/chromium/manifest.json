@@ -1,0 +1,26 @@
+{
+  "manifest_version": 3,
+  "name": "Browser Control MCP Bridge",
+  "version": "0.1.0",
+  "description": "WebSocket bridge for Browser Control MCP server",
+  "permissions": ["tabs", "activeTab", "storage", "scripting"],
+  "host_permissions": ["<all_urls>"],
+  "action": {
+    "default_title": "Browser Control",
+    "default_popup": "popup.html"
+  },
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["content.js"],
+      "run_at": "document_idle"
+    }
+  ],
+  "options_ui": {
+    "page": "credentials.html",
+    "open_in_tab": true
+  }
+}
