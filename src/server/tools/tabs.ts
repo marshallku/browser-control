@@ -84,4 +84,58 @@ export function registerTabTools(server: McpServer): void {
       };
     },
   );
+
+  server.tool(
+    "go_back",
+    "Navigate the tab back in history",
+    {
+      tabId: z.number().optional().describe("Tab ID (default: active tab)"),
+    },
+    async ({ tabId }) => {
+      const res = await send("tabs.goBack", { tabId });
+      return {
+        content: [
+          { type: "text", text: res.success ? "Navigated back" : res.error! },
+        ],
+        isError: !res.success,
+      };
+    },
+  );
+
+  server.tool(
+    "go_forward",
+    "Navigate the tab forward in history",
+    {
+      tabId: z.number().optional().describe("Tab ID (default: active tab)"),
+    },
+    async ({ tabId }) => {
+      const res = await send("tabs.goForward", { tabId });
+      return {
+        content: [
+          {
+            type: "text",
+            text: res.success ? "Navigated forward" : res.error!,
+          },
+        ],
+        isError: !res.success,
+      };
+    },
+  );
+
+  server.tool(
+    "reload",
+    "Reload the current tab",
+    {
+      tabId: z.number().optional().describe("Tab ID (default: active tab)"),
+    },
+    async ({ tabId }) => {
+      const res = await send("tabs.reload", { tabId });
+      return {
+        content: [
+          { type: "text", text: res.success ? "Tab reloaded" : res.error! },
+        ],
+        isError: !res.success,
+      };
+    },
+  );
 }

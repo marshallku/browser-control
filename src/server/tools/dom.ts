@@ -100,4 +100,52 @@ export function registerDomTools(server: McpServer): void {
       };
     },
   );
+
+  server.tool(
+    "get_accessibility_tree",
+    "Get a semantic accessibility tree of the page showing interactive elements with ref numbers, roles, names, and states. Ideal for understanding page structure.",
+    {
+      tabId: z.number().optional().describe("Tab ID (default: active tab)"),
+      maxElements: z
+        .number()
+        .optional()
+        .describe("Maximum elements to include (default: 500)"),
+    },
+    async ({ tabId, maxElements }) => {
+      const res = await send("dom.accessibilityTree", {
+        tabId,
+        maxElements,
+      });
+      return {
+        content: [
+          {
+            type: "text",
+            text: res.success ? String(res.data) : res.error!,
+          },
+        ],
+        isError: !res.success,
+      };
+    },
+  );
+
+  server.tool(
+    "get_form_values",
+    "Get all named input values from a form element",
+    {
+      tabId: z.number().optional().describe("Tab ID (default: active tab)"),
+      selector: z.string().describe("CSS selector of the form element"),
+    },
+    async ({ tabId, selector }) => {
+      const res = await send("dom.formValues", { tabId, selector });
+      return {
+        content: [
+          {
+            type: "text",
+            text: res.success ? JSON.stringify(res.data, null, 2) : res.error!,
+          },
+        ],
+        isError: !res.success,
+      };
+    },
+  );
 }

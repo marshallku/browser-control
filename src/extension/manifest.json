@@ -3,7 +3,7 @@
   "name": "Browser Control MCP Bridge",
   "version": "0.1.0",
   "description": "WebSocket bridge for Browser Control MCP server",
-  "permissions": ["tabs", "activeTab", "<all_urls>"],
+  "permissions": ["tabs", "activeTab", "cookies", "<all_urls>"],
   "background": {
     "scripts": ["background.js"],
     "persistent": true

@@ -91,4 +91,114 @@ export function registerInteractionTools(server: McpServer): void {
       };
     },
   );
+
+  server.tool(
+    "click_annotation",
+    "Click an element by its annotation ref number (from annotate_page or get_accessibility_tree)",
+    {
+      ref: z.number().describe("Annotation reference number (e.g. 1, 2, 3)"),
+      tabId: z.number().optional().describe("Tab ID (default: active tab)"),
+    },
+    async ({ ref, tabId }) => {
+      const res = await send("interaction.clickAnnotation", { ref, tabId });
+      return {
+        content: [
+          {
+            type: "text",
+            text: res.success ? `Clicked @${ref}` : res.error!,
+          },
+        ],
+        isError: !res.success,
+      };
+    },
+  );
+
+  server.tool(
+    "type_annotation",
+    "Type text into an element by its annotation ref number (from annotate_page or get_accessibility_tree)",
+    {
+      ref: z.number().describe("Annotation reference number"),
+      text: z.string().describe("Text to type"),
+      clear: z
+        .boolean()
+        .optional()
+        .describe("Clear existing value first (default: true)"),
+      tabId: z.number().optional().describe("Tab ID (default: active tab)"),
+    },
+    async ({ ref, text, clear, tabId }) => {
+      const res = await send("interaction.typeAnnotation", {
+        ref,
+        text,
+        clear,
+        tabId,
+      });
+      return {
+        content: [
+          {
+            type: "text",
+            text: res.success ? `Typed into @${ref}` : res.error!,
+          },
+        ],
+        isError: !res.success,
+      };
+    },
+  );
+
+  server.tool(
+    "select_option",
+    "Select an option in a <select> dropdown element",
+    {
+      tabId: z.number().optional().describe("Tab ID (default: active tab)"),
+      selector: z.string().describe("CSS selector of the <select> element"),
+      value: z.string().optional().describe("Option value to select"),
+      label: z.string().optional().describe("Option label text to select"),
+      index: z.number().optional().describe("Option index to select (0-based)"),
+    },
+    async ({ tabId, selector, value, label, index }) => {
+      const res = await send("interaction.selectOption", {
+        tabId,
+        selector,
+        value,
+        label,
+        index,
+      });
+      return {
+        content: [
+          { type: "text", text: res.success ? "Option selected" : res.error! },
+        ],
+        isError: !res.success,
+      };
+    },
+  );
+
+  server.tool(
+    "check_element",
+    "Check or uncheck a checkbox or radio button",
+    {
+      tabId: z.number().optional().describe("Tab ID (default: active tab)"),
+      selector: z.string().describe("CSS selector of checkbox/radio element"),
+      checked: z
+        .boolean()
+        .optional()
+        .describe("Desired checked state (default: true)"),
+    },
+    async ({ tabId, selector, checked }) => {
+      const res = await send("interaction.check", {
+        tabId,
+        selector,
+        checked,
+      });
+      return {
+        content: [
+          {
+            type: "text",
+            text: res.success
+              ? `Element ${checked === false ? "unchecked" : "checked"}`
+              : res.error!,
+          },
+        ],
+        isError: !res.success,
+      };
+    },
+  );
 }

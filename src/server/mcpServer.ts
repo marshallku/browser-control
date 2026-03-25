@@ -4,6 +4,11 @@ import { registerDomTools } from "./tools/dom.js";
 import { registerInteractionTools } from "./tools/interaction.js";
 import { registerCaptureTools } from "./tools/capture.js";
 import { registerExecutionTools } from "./tools/execution.js";
+import { registerWaitTools } from "./tools/wait.js";
+import { registerDialogTools } from "./tools/dialog.js";
+import { registerCookieTools } from "./tools/cookies.js";
+import { registerStorageTools } from "./tools/storage.js";
+import { registerMonitorTools } from "./tools/monitor.js";
 
 export function createMcpServer(): McpServer {
   const server = new McpServer({
@@ -16,6 +21,11 @@ export function createMcpServer(): McpServer {
   registerInteractionTools(server);
   registerCaptureTools(server);
   registerExecutionTools(server);
+  registerWaitTools(server);
+  registerDialogTools(server);
+  registerCookieTools(server);
+  registerStorageTools(server);
+  registerMonitorTools(server);
 
   return server;
 }
