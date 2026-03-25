@@ -3,53 +3,101 @@ import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { send } from "../bridge.js";
 
 export function registerDomTools(server: McpServer): void {
-    server.tool(
-        "get_html",
-        "Get HTML content from a page or element",
-        {
-            tabId: z.number().optional().describe("Tab ID (default: active tab)"),
-            selector: z.string().optional().describe("CSS selector (default: document.body)"),
-            outer: z.boolean().optional().describe("Include outer HTML (default: true)"),
-        },
-        async ({ tabId, selector, outer }) => {
-            const res = await send("dom.getHtml", { tabId, selector, outer });
-            return {
-                content: [{ type: "text", text: res.success ? String(res.data) : res.error! }],
-                isError: !res.success,
-            };
-        },
-    );
+  server.tool(
+    "get_html",
+    "Get HTML content from a page or element. By default removes script/style/svg tags, comments, and data-* attributes for cleaner output.",
+    {
+      tabId: z.number().optional().describe("Tab ID (default: active tab)"),
+      selector: z
+        .string()
+        .optional()
+        .describe("CSS selector (default: document.body)"),
+      outer: z
+        .boolean()
+        .optional()
+        .describe("Include outer HTML (default: true)"),
+      clean: z
+        .boolean()
+        .optional()
+        .describe(
+          "Remove script/style/svg tags, comments, data-* attrs (default: true)",
+        ),
+    },
+    async ({ tabId, selector, outer, clean }) => {
+      const res = await send("dom.getHtml", { tabId, selector, outer, clean });
+      return {
+        content: [
+          { type: "text", text: res.success ? String(res.data) : res.error! },
+        ],
+        isError: !res.success,
+      };
+    },
+  );
 
-    server.tool(
-        "get_text",
-        "Get text content from a page or element",
-        {
-            tabId: z.number().optional().describe("Tab ID (default: active tab)"),
-            selector: z.string().optional().describe("CSS selector (default: document.body)"),
-        },
-        async ({ tabId, selector }) => {
-            const res = await send("dom.getText", { tabId, selector });
-            return {
-                content: [{ type: "text", text: res.success ? String(res.data) : res.error! }],
-                isError: !res.success,
-            };
-        },
-    );
+  server.tool(
+    "get_text",
+    "Get text content from a page or element. By default extracts only visible text from the main content area, skipping script/style/nav noise.",
+    {
+      tabId: z.number().optional().describe("Tab ID (default: active tab)"),
+      selector: z
+        .string()
+        .optional()
+        .describe("CSS selector (default: auto-detect main content)"),
+      raw: z
+        .boolean()
+        .optional()
+        .describe("Return raw textContent without cleaning (default: false)"),
+      mainContent: z
+        .boolean()
+        .optional()
+        .describe(
+          "Auto-detect main content area when no selector given (default: true)",
+        ),
+    },
+    async ({ tabId, selector, raw, mainContent }) => {
+      const res = await send("dom.getText", {
+        tabId,
+        selector,
+        raw,
+        mainContent,
+      });
+      return {
+        content: [
+          { type: "text", text: res.success ? String(res.data) : res.error! },
+        ],
+        isError: !res.success,
+      };
+    },
+  );
 
-    server.tool(
-        "query_selector",
-        "Find elements matching a CSS selector",
-        {
-            tabId: z.number().optional().describe("Tab ID (default: active tab)"),
-            selector: z.string().describe("CSS selector"),
-            limit: z.number().optional().describe("Max results (default: 20)"),
-        },
-        async ({ tabId, selector, limit }) => {
-            const res = await send("dom.querySelector", { tabId, selector, limit });
-            return {
-                content: [{ type: "text", text: res.success ? JSON.stringify(res.data, null, 2) : res.error! }],
-                isError: !res.success,
-            };
-        },
-    );
+  server.tool(
+    "query_selector",
+    "Find elements matching a CSS selector",
+    {
+      tabId: z.number().optional().describe("Tab ID (default: active tab)"),
+      selector: z.string().describe("CSS selector"),
+      limit: z.number().optional().describe("Max results (default: 20)"),
+      visibleOnly: z
+        .boolean()
+        .optional()
+        .describe("Exclude hidden/invisible elements (default: false)"),
+    },
+    async ({ tabId, selector, limit, visibleOnly }) => {
+      const res = await send("dom.querySelector", {
+        tabId,
+        selector,
+        limit,
+        visibleOnly,
+      });
+      return {
+        content: [
+          {
+            type: "text",
+            text: res.success ? JSON.stringify(res.data, null, 2) : res.error!,
+          },
+        ],
+        isError: !res.success,
+      };
+    },
+  );
 }

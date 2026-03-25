@@ -6,16 +6,16 @@ import { registerCaptureTools } from "./tools/capture.js";
 import { registerExecutionTools } from "./tools/execution.js";
 
 export function createMcpServer(): McpServer {
-    const server = new McpServer({
-        name: "browser-control",
-        version: "0.1.0",
-    });
+  const server = new McpServer({
+    name: "browser-control",
+    version: "0.1.0",
+  });
 
-    registerTabTools(server);
-    registerDomTools(server);
-    registerInteractionTools(server);
-    registerCaptureTools(server);
-    registerExecutionTools(server);
+  registerTabTools(server);
+  registerDomTools(server);
+  registerInteractionTools(server);
+  registerCaptureTools(server);
+  registerExecutionTools(server);
 
-    return server;
+  return server;
 }

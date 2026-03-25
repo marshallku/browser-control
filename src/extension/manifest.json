@@ -1,24 +1,24 @@
 {
-    "manifest_version": 2,
-    "name": "Browser Control MCP Bridge",
-    "version": "0.1.0",
-    "description": "WebSocket bridge for Browser Control MCP server",
-    "permissions": ["tabs", "activeTab", "<all_urls>"],
-    "background": {
-        "scripts": ["background.js"],
-        "persistent": true
-    },
-    "content_scripts": [
-        {
-            "matches": ["<all_urls>"],
-            "js": ["content.js"],
-            "run_at": "document_idle"
-        }
-    ],
-    "browser_specific_settings": {
-        "gecko": {
-            "id": "browser-control@mcp.local",
-            "strict_min_version": "109.0"
-        }
+  "manifest_version": 2,
+  "name": "Browser Control MCP Bridge",
+  "version": "0.1.0",
+  "description": "WebSocket bridge for Browser Control MCP server",
+  "permissions": ["tabs", "activeTab", "<all_urls>"],
+  "background": {
+    "scripts": ["background.js"],
+    "persistent": true
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["content.js"],
+      "run_at": "document_idle"
     }
+  ],
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "browser-control@mcp.local",
+      "strict_min_version": "109.0"
+    }
+  }
 }
